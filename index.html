@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bank Exam Quiz</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+}
+
+/* ========================= */
+/* TIMER AREA */
+/* ========================= */
+
+#timer-container{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:#f4f6f9;
+    padding-bottom:10px;
+}
+
+#timer{
+    background:#222;
+    color:white;
+    padding:15px;
+    text-align:center;
+    font-size:22px;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+.timer-buttons{
+    text-align:center;
+}
+
+#pauseBtn,
+#resumeBtn{
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    margin:5px;
+}
+
+#pauseBtn{
+    background:#ff9800;
+    color:white;
+}
+
+#resumeBtn{
+    background:#28a745;
+    color:white;
+}
+
+.question{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.question h3{
+    margin-bottom:15px;
+}
+
+.option{
+    display:block;
+    padding:12px;
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.option:hover{
+    background:#f0f0f0;
+}
+
+.selected{
+    background:#cfe2ff;
+    border:2px solid #0d6efd;
+}
+
+.mark-btn{
+    margin-top:10px;
+    padding:8px 15px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#ff9800;
+    color:white;
+}
+
+.marked{
+    background:#ffcc80 !important;
+}
+
+.review-marked{
+    background:#e0e0e0 !important;
+    border:2px solid #9e9e9e;
+}
+
+.clear-btn{
+    margin-top:10px;
+    margin-left:10px;
+    padding:8px 15px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#dc3545;
+    color:white;
+}
+
+.submit-btn{
+    width:100%;
+    padding:15px;
+    font-size:20px;
+    border:none;
+    border-radius:10px;
+    background:#28a745;
+    color:white;
+    cursor:pointer;
+    margin-top:20px;
+}
+
+.result-box{
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    text-align:center;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+.review-btn{
+    padding:12px 20px;
+    margin-top:20px;
+    border:none;
+    border-radius:10px;
+    background:#007bff;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.review-question{
+    background:white;
+    padding:20px;
+    margin:20px 0;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.correct{
+    color:green;
+    font-weight:bold;
+}
+
+.wrong{
+    color:red;
+    font-weight:bold;
+}
+
+.unanswered{
+    color:orange;
+    font-weight:bold;
+}
+
+.correct-answer{
+    background:#d4edda;
+    padding:10px;
+    border-radius:8px;
+    margin-top:10px;
+}
+
+.disabled-option{
+    pointer-events:none;
+    opacity:0.6;
+}
+
+.disabled-btn{
+    opacity:0.6;
+    cursor:not-allowed;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Bank Exam MCQ Quiz</h1>
+
+<!-- ========================= -->
+<!-- TIMER -->
+<!-- ========================= -->
+
+<div id="timer-container">
+
+    <div id="timer">
+        Time Left: 20:00
+    </div>
+
+    <div class="timer-buttons">
+
+        <button id="pauseBtn" onclick="pauseTimer()">
+            Pause
+        </button>
+
+        <button id="resumeBtn" onclick="resumeTimer()" disabled>
+            Resume
+        </button>
+
+    </div>
+
+</div>
+
+<div id="quiz"></div>
+
+<button class="submit-btn" onclick="submitQuiz()">
+Submit Quiz
+</button>
+
+</div>
+
+<script>
+
+// ===============================
+// QUESTIONS AREA
+// ===============================
+
+const questions = [
+
+{q:"1. The Cabinet Committee on Economic Affairs (CCEA) approved two mega hydroelectric projects worth Rs. 40,175.33 crore in Arunachal Pradesh to strengthen renewable energy and energy security in the North-Eastern Region. Which among the following correctly matches the project with its installed capacity and estimated cost?", options:["Kalai-II Hydro Electric Project – 1720 MW – Rs. 26,069.5 crore","Kamala Hydro Electric Project – 1200 MW – Rs. 14,105.83 crore","Kalai-II Hydro Electric Project – 1200 MW – Rs. 14,105.83 crore","Kamala Hydro Electric Project – 1500 MW – Rs. 20,500 crore"], answer:0},
+
+{q:"2. The Union Cabinet approved Nutrient Based Subsidy (NBS) rates for the Kharif Season 2026 on Phosphatic and Potassic (P&K) fertilizers with a budgetary allocation exceeding Rs. 41,000 crore. Which ministry administers the Nutrient Based Subsidy scheme for fertilizers in India?", options:["Ministry of Chemicals and Fertilizers","Ministry of Agriculture and Farmers Welfare","Ministry of Rural Development","Ministry of Commerce and Industry"], answer:0},
+
+{q:"3. The Union Cabinet approved the Jaipur Metro Project Phase-II connecting Prahladpura to Todi Mod. What is the approximate length and estimated project cost of this phase?", options:["31 km and Rs. 9,500 crore","41 km and Rs. 13,037.66 crore","51 km and Rs. 15,500 crore","46 km and Rs. 12,200 crore"], answer:1},
+
+{q:"4. Union Minister of State Jayant Chaudhary initiated a campaign to establish the Skills Outcomes Fund (SOF) aimed at improving youth livelihoods. Which organization is anchoring this initiative under the Ministry of Skill Development and Entrepreneurship (MSDE)?", options:["National Skill Development Corporation (NSDC)","National Institute for Entrepreneurship and Small Business Development (NIESBUD)","Directorate General of Training (DGT)","National Career Service (NCS)"], answer:0},
+
+{q:"5. NITI Aayog released the report titled “From Borrowers to Builders: Women and India’s Evolving Credit Market”. According to the report, women held what percentage share of India’s total credit portfolio in 2025?", options:["18%","22%","26%","31%"], answer:1},
+
+{q:"6. India officially withdrew its proposal to host the Conference of Parties (COP-33) Climate Summit scheduled for 2028 under the United Nations Framework Convention on Climate Change (UNFCCC). Which country subsequently became the sole bidder?", options:["Japan","South Korea","Indonesia","Australia"], answer:3},
+
+{q:"7. Union MoS Dr. Jitendra Singh announced the establishment of a Doppler Weather Radar (DWR) and Seismological Observatory in Jammu & Kashmir under Mission Mausam. Mission Mausam, launched in January 2025, has an outlay of approximately:", options:["Rs. 500 crore","Rs. 1,200 crore","Rs. 2,000 crore","Rs. 3,500 crore"], answer:2},
+
+{q:"8. The Aluminium Extrusion Manufacturers Association of India (ALEMAI) launched the ‘Aluminium Bharat’ initiative to enhance domestic manufacturing and industrial growth. India currently ranks at which position globally in aluminium production?", options:["First","Second","Third","Fourth"], answer:1},
+
+{q:"9. NTPC Limited signed a strategic non-binding Memorandum of Understanding (MoU) with France’s Électricité de France (EDF) to explore collaboration in nuclear power projects. Which reactor technology of EDF was specifically highlighted?", options:["Boiling Water Reactor (BWR)","Pressurised Heavy Water Reactor (PHWR)","European Pressurised Reactor (EPR)","Fast Breeder Reactor (FBR)"], answer:2},
+
+{q:"10. Indian Council of Agricultural Research (ICAR) constituted a Special Task Force (STF) to strengthen agricultural resilience amid geopolitical disruptions. Which water-saving agricultural technology received special focus under this initiative?", options:["Zero Budget Natural Farming","Direct Seeding of Rice (DSR)","Vertical Hydroponic Cultivation","Precision Sprinkler Irrigation"], answer:1},
+
+{q:"11. India was elected by acclamation to multiple subsidiary bodies of the United Nations Economic and Social Council (ECOSOC). India was elected to the Committee for Programme and Coordination (CPC) for which term?", options:["2025–2027","2026–2028","2027–2029","2028–2030"], answer:2},
+
+{q:"12. During the 1st Bi-monthly Monetary Policy Meeting of FY27, the Reserve Bank of India (RBI) maintained the repo rate at:", options:["4.75%","5.00%","5.25%","5.50%"], answer:2},
+
+{q:"13. RBI revised its GDP growth forecast for FY27 downward from 7.4% to:", options:["6.5%","6.7%","6.9%","7.1%"], answer:2},
+
+{q:"14. Nasscom Foundation appointed UB Pravin Rao as its new Chairperson. He succeeded which former Chairperson?", options:["Debjani Ghosh","Rekha M. Menon","Rostow Ravanan","Rishad Premji"], answer:2},
+
+{q:"15. James Warren Whittaker, who passed away recently, was internationally known for which historic achievement?", options:["First person to ski across Antarctica","First American to summit Mount Everest","First climber to scale K2 without oxygen","First mountaineer to climb all Seven Summits"], answer:1},
+
+{q:"16. Central Reserve Police Force (CRPF) Valour Day, also known as Shaurya Diwas, is observed annually to commemorate the bravery displayed during which battle?", options:["Battle of Rezang La","Battle of Longewala","Battle of Sardar Post","Battle of Haji Pir Pass"], answer:2},
+
+{q:"17. Puducherry election authorities deployed a saree-clad humanoid robot named ‘Nila’ at a polling booth. The robot was developed by which city-based company?", options:["Hyderabad-based Techtronics","Bengaluru-based Humanoid Labs","Chennai-based RoboVision","Coimbatore-based Robo Mirror"], answer:3},
+
+{q:"18. Pradhan Mantri MUDRA Yojana (PMMY), launched in April 2015, provides collateral-free loans to non-farm small and micro enterprises. Under PMMY, the ‘Tarun Plus’ category offers loans in which range?", options:["Rs. 50,000 to Rs. 5 lakh","Rs. 5 lakh to Rs. 10 lakh","Rs. 10 lakh to Rs. 20 lakh","Above Rs. 20 lakh only"], answer:2},
+
+{q:"19. The Ministry of Civil Aviation (MoCA) approved development of Warangal and Adilabad airports in Telangana. Adilabad Airport is proposed to serve which dual purpose?", options:["Tourism and cargo logistics","Civilian operations and armed forces training","Medical evacuation and regional tourism","Drone operations and defence exports"], answer:1},
+
+{q:"20. Pension Fund Regulatory and Development Authority (PFRDA) approved PPFAS Asset Management Company (AMC) as sponsor for a pension fund under the National Pension System (NPS). NPS was initially launched for government employees in:", options:["2002","2004","2006","2009"], answer:1},
+
+{q:"21. National Highways Authority of India (NHAI) launched the ‘Arogya Van’ initiative to develop medicinal plantations along highways. Phase-I of the initiative covers approximately:", options:["22 hectares","40.5 hectares","62.8 hectares","90 hectares"], answer:2},
+
+{q:"22. Financial Intelligence Unit-India (FIU-IND) signed an MoU with the Indian Cyber Crime Coordination Centre (I4C) to combat cyber fraud and financial crimes. I4C functions under which ministry?", options:["Ministry of Electronics and Information Technology","Ministry of Home Affairs","Ministry of Finance","Ministry of Corporate Affairs"], answer:1},
+
+{q:"23. The fourth edition of the India-Egypt Joint Special Forces Exercise ‘Cyclone-IV’ commenced in Egypt. The exercise was held at:", options:["Cairo Military Base","Sinai Desert Training Centre","Rangers Forces Headquarters, Anshas","Alexandria Tactical Warfare Centre"], answer:2},
+
+{q:"24. According to Tracxn’s India Tech Annual Funding Report 2026, India ranked which position globally in tech funding during FY26?", options:["Second","Third","Fourth","Fifth"], answer:2},
+
+{q:"25. NPCI Bharat BillPay Limited (NBBL) onboarded Axis Bank onto its Banking Connect platform. NBBL is a wholly owned subsidiary of which organization?", options:["RBI Innovation Hub","National Payments Corporation of India (NPCI)","Indian Banks’ Association (IBA)","BharatPe Digital Services"], answer:1},
+
+{q:"26. CSB Bank launched its first dedicated retail savings product called ‘SMART SAVE ACCOUNT’. What is the maximum interest rate offered on sweep-in fixed deposits under this product?", options:["6%","6.5%","7%","7.5%"], answer:3},
+
+{q:"27. The Appointments Committee of the Cabinet (ACC) appointed Sanjay Khanna as Chairman and Managing Director (CMD) of Bharat Petroleum Corporation Limited (BPCL). Before this appointment, he served as:", options:["Director (Marketing)","Director (Finance)","Director (Refineries)","Executive Director (Projects)"], answer:0},
+
+{q:"28. ISRO successfully conducted the Integrated Air Drop Test-02 (IADT-02) for the Gaganyaan Mission at Sriharikota. During the operation, how many parachutes were deployed sequentially?", options:["6","8","10","12"], answer:2},
+
+{q:"29. Meta Platforms launched its new AI model ‘Muse Spark’ under which series?", options:["Atlas Series","Avocado Series","Horizon Series","Titan Series"], answer:1},
+
+{q:"30. Abu Hasem Khan Chowdhury, popularly known as ‘Dalu Babu’, who passed away recently, belonged to which political party?", options:["Communist Party of India (Marxist)","Bharatiya Janata Party","Trinamool Congress","Indian National Congress"], answer:3},
+
+{q:"31. World Homeopathy Day is observed annually on April 10 to mark the birth anniversary of:", options:["Edward Jenner","Samuel Hahnemann","Louis Pasteur","Joseph Lister"], answer:1},
+
+{q:"32. Telangana’s AI innovation hub ‘Aikam’ signed an MoU with Deakin University of Australia to promote AI research and skilling. Aikam was launched in:", options:["2023","2024","2025","2026"], answer:1},
+
+{q:"33. Vice President C. P. Radhakrishnan released the updated Constitution of India in Sindhi language in both Devanagari and Persian scripts on the occasion of:", options:["Constitution Day","National Integration Day","Sindhi Language Day","Hindi Diwas"], answer:2},
+
+{q:"34. Doordarshan (DD) and the Indian Council for Cultural Relations (ICCR) signed an MoU to promote Indian culture globally. The agreement is valid for:", options:["One year","Two years","Three years","Five years"], answer:2},
+
+{q:"35. Gujarat Government signed an MoU with Taiwan-linked Allegiance International Company Limited to establish an Indo-Taiwan Industrial Park in which region?", options:["Gandhinagar–Ahmedabad","Surat–Hazira","Sanand–Dholera","Rajkot–Jamnagar"], answer:2},
+
+{q:"36. HUDCO and NBCC signed two MoUs related to redevelopment and asset monetisation. The redevelopment project specifically involves which location in New Delhi?", options:["Pragati Maidan","August Kranti Bhawan","Vigyan Bhawan Annex","Rail Bhawan Complex"], answer:1},
+
+{q:"37. The 7th edition of India-Uzbekistan Joint Military Exercise ‘DUSTLIK 2026’ was held in Namangan, Uzbekistan. The Indian contingent included personnel from the Indian Army and which other force?", options:["Indian Navy","National Security Guard","Border Security Force","Indian Air Force"], answer:3},
+
+{q:"38. RBI unveiled its medium-term strategy framework ‘Utkarsh 2029’. How many deliverables across various pillars are outlined under the framework?", options:["29","36","49","60"], answer:1},
+
+{q:"39. SEBI launched three new IT platforms including SUPCOMS 2.1. What does SUPCOMS stand for?", options:["Securities Unified Platform for Compliance Management Systems","Single Universal Platform for Communications","Supervisory Unified Portal for Communication Systems","Standard Utility Platform for Corporate Market Surveillance"], answer:2},
+
+{q:"40. Paytm introduced biometric authentication for UPI payments and cardless ATM withdrawals. According to the update, the cardless ATM withdrawal limit per transaction is:", options:["Rs. 2,000","Rs. 5,000","Rs. 7,500","Rs. 10,000"], answer:3},
+
+{q:"41. Central Ayurveda Research Institute (CARI), Bengaluru became the first institute under CCRAS to receive ISO 15189:2022 accreditation in which areas?", options:["Pathology and Radiology","Toxicology and Virology","Biochemistry and Haematology","Oncology and Pharmacology"], answer:2},
+
+{q:"42. NASA’s Artemis II lunar mission scripted history by completing the first-ever ship-to-ship call between a human moon mission and which space facility?", options:["Tiangong Space Station","Lunar Gateway","International Space Station","Kennedy Space Center Orbital Lab"], answer:2},
+
+{q:"43. At the 2026 Asian Wrestling Championships held in Bishkek, Kyrgyzstan, India finished with a total of how many medals?", options:["12","15","17","19"], answer:2},
+
+{q:"44. During the 2026 Asian Boxing Championships in Mongolia, India secured which overall position in the medal tally?", options:["First","Second","Third","Fourth"], answer:1},
+
+{q:"45. National Safe Motherhood Day is observed every year on April 11 in honour of the birth anniversary of:", options:["Sarojini Naidu","Annie Besant","Vijaya Lakshmi Pandit","Kasturba Gandhi"], answer:0},
+
+{q:"46. Prime Minister Narendra Modi inaugurated the Delhi–Dehradun Economic Corridor during his visit to Uttarakhand and Uttar Pradesh. The corridor is approximately:", options:["145 km long","178 km long","213 km long","275 km long"], answer:2},
+
+{q:"47. Startup India Fund of Funds 2.0 with an allocation of Rs. 10,000 crore was notified by the Ministry of Commerce and Industry through DPIIT. Which institution will act as the primary implementing agency?", options:["NABARD","IFCI","SIDBI","IREDA"], answer:2},
+
+{q:"48. Andhra Pradesh Chief Minister N. Chandrababu Naidu inaugurated India’s first open-access Amaravati Quantum Reference Facility (AQRF) on which occasion?", options:["National Technology Day","World Quantum Day","Science Day","Innovation Week"], answer:1},
+
+{q:"49. The Ministry of Labour and Employment signed MoUs with Porter and Gigin Technologies to strengthen job matching on which portal?", options:["Skill India Digital Hub","National Apprenticeship Portal","e-Shram Portal","National Career Service (NCS) Portal"], answer:3},
+
+{q:"50. According to the IMF’s April 2026 World Economic Outlook titled “Global Economy in the Shadow of War”, India slipped to which position in global GDP rankings?", options:["4th","5th","6th","7th"], answer:0},
+
+];
+
+// ===============================
+// VARIABLES
+// ===============================
+
+let userAnswers = new Array(questions.length).fill(null);
+
+let markedForReview = new Array(questions.length).fill(false);
+
+let submitted = false;
+
+// ===============================
+// LOAD QUIZ
+// ===============================
+
+function loadQuiz(){
+
+    const quizDiv = document.getElementById("quiz");
+
+    questions.forEach((question,index)=>{
+
+        const qDiv = document.createElement("div");
+
+        qDiv.classList.add("question");
+
+        qDiv.id = `question_${index}`;
+
+        qDiv.innerHTML = `
+        <h3>Q${index+1}. ${question.q}</h3>
+        `;
+
+        question.options.forEach((option,optIndex)=>{
+
+            const opt = document.createElement("div");
+
+            opt.classList.add("option");
+
+            opt.innerText = option;
+
+            opt.onclick = ()=>selectOption(index,optIndex,opt);
+
+            opt.id = `q${index}_opt${optIndex}`;
+
+            qDiv.appendChild(opt);
+
+        });
+
+        // MARK BUTTON
+
+        const markBtn = document.createElement("button");
+
+        markBtn.innerText = "Mark For Review";
+
+        markBtn.classList.add("mark-btn");
+
+        markBtn.onclick = ()=>toggleMark(index,markBtn);
+
+        qDiv.appendChild(markBtn);
+
+        // CLEAR BUTTON
+
+        const clearBtn = document.createElement("button");
+
+        clearBtn.innerText = "Clear";
+
+        clearBtn.classList.add("clear-btn");
+
+        clearBtn.onclick = ()=>clearAnswer(index);
+
+        qDiv.appendChild(clearBtn);
+
+        quizDiv.appendChild(qDiv);
+
+    });
+
+}
+
+// ===============================
+// SELECT OPTION
+// ===============================
+
+function selectOption(qIndex,optIndex,element){
+
+    if(submitted) return;
+
+    userAnswers[qIndex] = optIndex;
+
+    const options = document.querySelectorAll(`[id^="q${qIndex}_opt"]`);
+
+    options.forEach(opt=>{
+        opt.classList.remove("selected");
+    });
+
+    element.classList.add("selected");
+
+}
+
+// ===============================
+// MARK FOR REVIEW
+// ===============================
+
+function toggleMark(index,button){
+
+    markedForReview[index] = !markedForReview[index];
+
+    const questionBox = document.getElementById(`question_${index}`);
+
+    if(markedForReview[index]){
+
+        button.classList.add("marked");
+
+        button.innerText = "Marked For Review";
+
+        questionBox.classList.add("review-marked");
+
+    }else{
+
+        button.classList.remove("marked");
+
+        button.innerText = "Mark For Review";
+
+        questionBox.classList.remove("review-marked");
+
+    }
+
+}
+
+// ===============================
+// CLEAR ANSWER
+// ===============================
+
+function clearAnswer(index){
+
+    if(submitted) return;
+
+    userAnswers[index] = null;
+
+    const options = document.querySelectorAll(`[id^="q${index}_opt"]`);
+
+    options.forEach(opt=>{
+        opt.classList.remove("selected");
+    });
+
+}
+
+// ===============================
+// SUBMIT QUIZ
+// ===============================
+
+function submitQuiz(){
+
+    if(submitted) return;
+
+    submitted = true;
+
+    clearInterval(timer);
+
+    let score = 0;
+
+    let correctCount = 0;
+    let wrongCount = 0;
+    let unansweredCount = 0;
+
+    questions.forEach((question,index)=>{
+
+        const userAns = userAnswers[index];
+
+        if(userAns === null){
+
+            unansweredCount++;
+
+        }
+        else if(userAns === question.answer){
+
+            score += 1;
+            correctCount++;
+
+        }
+        else{
+
+            score -= 0.25;
+            wrongCount++;
+
+        }
+
+    });
+
+    let attempted = correctCount + wrongCount;
+
+    let accuracy = attempted > 0
+    ? ((correctCount/attempted)*100).toFixed(2)
+    : 0;
+
+    document.body.innerHTML = `
+
+    <div class="container">
+
+        <div class="result-box">
+
+            <h1>Quiz Submitted ✅</h1>
+
+            <h2>Total Score: ${score.toFixed(2)}</h2>
+
+            <h3>Correct Answers: ${correctCount}</h3>
+
+            <h3>Wrong Answers: ${wrongCount}</h3>
+
+            <h3>Unanswered Questions: ${unansweredCount}</h3>
+
+            <h3>Accuracy: ${accuracy}%</h3>
+
+            <button class="review-btn" onclick="reviewAnswers()">
+            Review Answers
+            </button>
+
+            <div id="reviewSection"></div>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+// ===============================
+// REVIEW ANSWERS
+// ===============================
+
+function reviewAnswers(){
+
+    const reviewSection = document.getElementById("reviewSection");
+
+    let html = `<h1 style="margin-top:40px;">Review Section</h1>`;
+
+    questions.forEach((question,index)=>{
+
+        const userAns = userAnswers[index];
+
+        let status = "";
+        let marks = "";
+
+        if(userAns === null){
+
+            status = `<span class="unanswered">Unanswered</span>`;
+            marks = `0 Marks`;
+
+        }
+        else if(userAns === question.answer){
+
+            status = `<span class="correct">Correct ✅</span>`;
+            marks = `+1 Mark`;
+
+        }
+        else{
+
+            status = `<span class="wrong">Wrong ❌</span>`;
+            marks = `-0.25 Mark`;
+
+        }
+
+        html += `
+
+        <div class="review-question">
+
+            <h3>Q${index+1}. ${question.q}</h3>
+
+            <p>${status}</p>
+
+            <p><b>Marks:</b> ${marks}</p>
+
+            <p>
+            <b>Your Answer:</b>
+            ${
+                userAns === null
+                ? "Not Attempted"
+                : question.options[userAns]
+            }
+            </p>
+
+            <div class="correct-answer">
+            <b>Correct Answer:</b>
+            ${question.options[question.answer]}
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    reviewSection.innerHTML = html;
+
+}
+
+// ===============================
+// TIMER
+// ===============================
+
+let time = 1200;
+
+let timer;
+
+let isPaused = false;
+
+function startTimer(){
+
+    timer = setInterval(()=>{
+
+        if(!isPaused){
+
+            let minutes = Math.floor(time/60);
+
+            let seconds = time%60;
+
+            document.getElementById("timer").innerText =
+            `Time Left: ${minutes}:${seconds < 10 ? '0'+seconds : seconds}`;
+
+            time--;
+
+            if(time < 0){
+
+                clearInterval(timer);
+
+                alert("Time is up! Quiz auto-submitted.");
+
+                submitQuiz();
+
+            }
+
+        }
+
+    },1000);
+
+}
+
+// ===============================
+// PAUSE TIMER
+// ===============================
+
+function pauseTimer(){
+
+    if(submitted) return;
+
+    isPaused = true;
+
+    document.getElementById("pauseBtn").disabled = true;
+
+    document.getElementById("resumeBtn").disabled = false;
+
+    // Disable options
+    document.querySelectorAll(".option").forEach(opt=>{
+        opt.classList.add("disabled-option");
+    });
+
+    // Disable buttons
+    document.querySelectorAll(".mark-btn, .clear-btn").forEach(btn=>{
+        btn.disabled = true;
+        btn.classList.add("disabled-btn");
+    });
+
+}
+// ===============================
+// RESUME TIMER
+// ===============================
+
+function resumeTimer(){
+
+    if(submitted) return;
+
+    isPaused = false;
+
+    document.getElementById("pauseBtn").disabled = false;
+
+    document.getElementById("resumeBtn").disabled = true;
+
+    // Enable options
+    document.querySelectorAll(".option").forEach(opt=>{
+        opt.classList.remove("disabled-option");
+    });
+
+    // Enable buttons
+    document.querySelectorAll(".mark-btn, .clear-btn").forEach(btn=>{
+        btn.disabled = false;
+        btn.classList.remove("disabled-btn");
+    });
+
+}
+// ===============================
+
+loadQuiz();
+
+startTimer();
+
+</script>
+
+</body>
+</html>
